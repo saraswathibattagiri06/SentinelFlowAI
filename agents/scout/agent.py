@@ -1,21 +1,49 @@
-import gitlab
 import os
+import gitlab
 from dotenv import load_dotenv
 
-load_dotenv() # This loads the variables from your .env file
+load_dotenv()
 
 class ScoutAgent:
     def __init__(self):
         self.gl = gitlab.Gitlab('https://gitlab.com', private_token=os.getenv('GITLAB_TOKEN'))
-        self.project = self.gl.projects.get(os.getenv('PROJECT_ID'))
+        self.project_id = os.getenv('PROJECT_ID')
+        self.project = self.gl.projects.get(self.project_id)
 
-    def find_vulnerabilities(self):
-        # Fetch the latest SAST/DAST findings
-        vulnerabilities = self.project.vulnerabilities.list()
-        # Filter for Critical/High that haven't been dismissed
-        return [v for v in vulnerabilities if v.severity in ['critical', 'high'] and v.state == 'detected']
+    
+    def get_vulnerabilities(self):
+        print(f"🔍 Scout is scanning project: {self.project.name}...")
+        
+        # Get detected vulnerabilities
+        vulnerabilities = self.project.vulnerabilities.list(
+            state='detected', 
+            severity=['critical', 'high']
+        )
+        
+        findings = []
+        for v in vulnerabilities:
+            # We extract the file path and line number for the Architect
+            file_path = v.location.get('file')
+            line_num = v.location.get('start_line')
+            
+            # 💡 PRO TIP: Fetch the actual source code around the bug
+            try:
+                f = self.project.files.get(file=file_path, ref='main')
+                content = f.decode().decode('utf-8')
+                # Send the specific context to the Architect
+                findings.append({
+                    "id": v.id,
+                    "name": v.name,
+                    "file": file_path,
+                    "line": line_num,
+                    "code_context": content
+                })
+                print(f"⚠️ FOUND: {v.name} in {file_path}")
+            except:
+                print(f"⚠️ Could not fetch source for {v.name}")
 
-# Mock execution for the hackathon
+        return findings
+
 if __name__ == "__main__":
     scout = ScoutAgent()
-    print(f"Scout found {len(scout.find_vulnerabilities())} high-risk targets.")
+    scout.get_vulnerabilities()
