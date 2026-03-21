@@ -9,21 +9,10 @@ stages:
 
 sentinelflow_remediate:
   stage: remediate
-  image: python:3.12
-  # Instead of naming specific jobs, this tells it to wait for 
-  # ALL jobs in the 'test' stage to finish successfully.
-  dependencies:
-    - semgrep-sast
   script:
     - mkdir -p patches/
     - pip install -r requirements.txt
-    - python agents/scout/agent.py
-    - python agents/architect/agent.py
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_COMMIT_BRANCH == "master"
-    - if: $CI_PIPELINE_SOURCE == "web"
+    - python main.py  # <--- This one command runs everything!
   artifacts:
-    when: always
     paths:
       - patches/
