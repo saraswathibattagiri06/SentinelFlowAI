@@ -9,10 +9,15 @@ stages:
 
 sentinelflow_remediate:
   stage: remediate
+  image: python:3.11
+  variables:
+    PYTHONPATH: "."  # <--- This tells Python to look in the root folder for modules
   script:
     - mkdir -p patches/
     - pip install -r requirements.txt
-    - python main.py  # <--- This one command runs everything!
+    - python main.py
   artifacts:
+    expose_as: 'Security Patch Report'
     paths:
       - patches/
+      - gl-job-summary.md
