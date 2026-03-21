@@ -1,0 +1,30 @@
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+stages:
+  - test
+  - remediate 
+
+sentinelflow_remediate:
+  stage: remediate
+  image: python:3.12
+  # This 'needs' tag ensures the AI doesn't run until the scans finish
+  needs: ["sast-reading", "secret-detection-reading"] 
+  allow_failure: true
+  script:
+    - mkdir -p patches/  # <--- CRITICAL: Prevents 'path not found' error
+    - pip install -r requirements.txt
+    - python agents/scout/agent.py
+    - python agents/architect/agent.py
+  rules:
+    # This ensures it runs on 'main' OR 'master' (common in new repos)
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"
+    # This allows you to test the pipeline on ANY branch manually
+    - if: $CI_PIPELINE_SOURCE == "web" 
+  artifacts:
+    when: always
+    paths:
+      - patches/
