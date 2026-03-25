@@ -1,5 +1,5 @@
 # 🛡️ SentinelFlow AI Remediation Report
-**Total Patches Generated:** 0
+**Total Patches Generated:** 1
 
 | Vulnerability | File | Status |
 | :--- | :--- | :--- |
