@@ -1,0 +1,44 @@
+# 🛡️ SentinelFlow AI: Autonomous Security Remediation
+
+**SentinelFlow AI** is an intelligent security pipeline that doesn't just find vulnerabilities—it fixes them. By combining GitLab's native Security Scanning (SAST) with the reasoning power of **Google Gemini**, SentinelFlow automatically generates code patches for critical security flaws.
+
+## 🚀 The Problem
+Security teams are overwhelmed by thousands of vulnerabilities. Most "static analysis" tools provide a long list of problems but no solutions, leading to "vulnerability fatigue" and slow fix times.
+
+## ✨ Our Solution: The Agentic Loop
+SentinelFlow introduces two specialized AI Agents:
+1.  **🔍 The Scout:** Monitors GitLab Security reports and identifies high-priority vulnerabilities.
+2.  **🏗️ The Architect:** Uses LLM reasoning to analyze the vulnerable code and generate a secure, functional patch.
+
+---
+
+## 🛠️ How It Works
+
+1.  **Scan:** GitLab SAST templates run during the `test` stage.
+2.  **Analyze:** The **Scout Agent** retrieves findings via the GitLab API.
+3.  **Remediate:** The **Architect Agent** (powered by Gemini) writes a fix.
+4.  **Report:** A `gl-job-summary.md` is generated, and patches are saved as artifacts.
+
+
+
+---
+
+## 📈 Demo Instructions
+
+### 1. View the Automated Pipeline
+Navigate to **Build > Pipelines** to see the **Remediate** stage running automatically after the security scans.
+
+### 2. Inspect the AI Patches
+Every successful run generates a **Security Patch Report**. 
+* Go to the `sentinelflow_remediate` job.
+* Click **Browse** under Job Artifacts.
+* Look in the `patches/` folder to see the code Gemini fixed!
+
+### 3. Local Setup (For Developers)
+To run the agents locally:
+1. Install dependencies: `pip install -r requirements.txt`
+2. Create a `.env` file with:
+   ```text
+   GITLAB_TOKEN=your_token
+   PROJECT_ID=your_id
+   GOOGLE_API_KEY=your_key

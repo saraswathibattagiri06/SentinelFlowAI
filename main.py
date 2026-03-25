@@ -3,7 +3,6 @@ import sys
 from dotenv import load_dotenv
 load_dotenv()
 
-# Crucial: Fixes the 'ModuleNotFound' squiggles
 base_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(base_dir, 'agents'))
 
@@ -28,7 +27,6 @@ def run_sentinelflow():
             architect.save_patch(bug['file'], fix)
             fixed_count += 1
 
-    # 📝 Final Report Generation
     with open("gl-job-summary.md", "w", encoding="utf-8") as f:
         f.write("# 🛡️ SentinelFlow AI Remediation Report\n")
         f.write(f"**Total Patches Generated:** {fixed_count}\n\n")

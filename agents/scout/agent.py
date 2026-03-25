@@ -12,7 +12,7 @@ class ScoutAgent:
         
         findings = []
         try:
-            # Attempt to get real vulnerabilities (Requires GitLab Ultimate)
+           
             vulnerabilities = self.project.vulnerabilities.list(state='detected', severity=['critical', 'high'])
             for v in vulnerabilities:
                 findings.append({
@@ -21,7 +21,7 @@ class ScoutAgent:
                     "code_context": self._fetch_file(v.location.get('file'))
                 })
         except Exception:
-            # DEMO MODE: If API is restricted, provide a sample bug for the Architect to fix
+      
             print("⚠️ GitLab Security API restricted. Entering Demo Mode...")
             findings.append({
                 "name": "SQL Injection",

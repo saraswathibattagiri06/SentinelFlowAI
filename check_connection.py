@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import gitlab
 
-# This forces Python to look for the .env in the CURRENT folder
+
 env_path = os.path.join(os.getcwd(), '.env')
 load_dotenv(dotenv_path=env_path)
 
@@ -14,7 +14,7 @@ print(f"DEBUG: Project ID is: {project_id}")
 
 try:
     gl = gitlab.Gitlab('https://gitlab.com', private_token=token)
-    gl.auth() # This checks if the token is valid
+    gl.auth() 
     print(f"✅ Authenticated as: {gl.user.username}")
     
     project = gl.projects.get(project_id)
